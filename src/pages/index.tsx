@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormItem from "../components/FormItem";
 import { signIn, useSession } from "next-auth/react";
 import { api } from "../utils/api";
+import { useRouter } from "next/router";
 
 const FAST_MODE = process.env.NEXT_PUBLIC_FAST_MODE === "true";
 const Home: NextPage = () => {
@@ -86,6 +87,7 @@ interface QuestionViewProps {
 }
 
 const QuestionView: FC<QuestionViewProps> = ({ questions }) => {
+  const router = useRouter();
   if (!questions.length) throw new Error("No questions provided");
   const progressStages = useMemo(() => {
     let stages: number[] = [0];
@@ -113,8 +115,8 @@ const QuestionView: FC<QuestionViewProps> = ({ questions }) => {
     ),
   });
 
-  const { data: session, status } = useSession();
-  console.log(session, status);
+  // const { data: session, status } = useSession();
+  // console.log(session, status);
 
   const [swiper, updateSwiper] = useState<SwiperType | undefined>();
   const [progressIndex, setProgressIndex] = useState<number>(0);
@@ -173,18 +175,18 @@ const QuestionView: FC<QuestionViewProps> = ({ questions }) => {
           ))}
           <SwiperSlide key={questions.length}>
             {({ isActive }) => {
-              const resultsMutation = api.ai.getAIAnalysis.useMutation({
-                onSuccess: (data) => {
-                  console.log(data);
-                  localStorage.setItem(
-                    "MVPBuilder_results",
-                    JSON.stringify(data)
-                  );
-                },
-                onError: (error) => {
-                  console.log(error);
-                },
-              });
+              // const resultsMutation = api.ai.getAIAnalysis.useMutation({
+              //   onSuccess: (data) => {
+              //     console.log(data);
+              //     localStorage.setItem(
+              //       "MVPBuilder_results",
+              //       JSON.stringify(data)
+              //     );
+              //   },
+              //   onError: (error) => {
+              //     console.log(error);
+              //   },
+              // });
 
               return (
                 <div
@@ -196,7 +198,7 @@ const QuestionView: FC<QuestionViewProps> = ({ questions }) => {
                   <h1 className="text-center text-4xl font-bold text-white">
                     Thank you for your time!
                   </h1>
-                  {status === "authenticated" ? (
+                  {true ? ( //status === "authenticated" ? (
                     <>
                       <h2 className="text-center text-2xl font-light text-white">
                         We will use AI to evaluate your project and offer you
@@ -207,7 +209,7 @@ const QuestionView: FC<QuestionViewProps> = ({ questions }) => {
                       </h3>
                       <button
                         id="resultsButton"
-                        onClick={() => void resultsMutation.mutate(getValues())}
+                        onClick={() => void router.push("/results")}
                         className="my-4 flex h-12 w-48 items-center justify-center gap-4 rounded-xl bg-primary bg-gradient-to-r from-secondary to-primary text-lg font-bold text-white outline-none focus:ring-4 focus:ring-primary/50 hover:opacity-95"
                       >
                         See Results
